@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片字幕生成器</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖼️ 图片字幕生成器</h1>
+            <p>为您的图片添加漂亮的字幕效果</p>
+        </header>
+
+        <main class="main-content">
+            <section class="preview-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-placeholder">
+                        <span class="upload-icon">📁</span>
+                        <p>点击或拖拽图片到这里</p>
+                        <p class="upload-hint">支持 JPG、PNG、GIF、WebP 格式</p>
+                    </div>
+                    <input type="file" id="imageInput" accept="image/*" hidden>
+                </div>
+                <div class="canvas-container" id="canvasContainer" style="display: none;">
+                    <canvas id="mainCanvas"></canvas>
+                </div>
+            </section>
+
+            <aside class="control-panel">
+                <div class="panel-section">
+                    <h3>📝 字幕文字</h3>
+                    <textarea id="captionText" placeholder="在这里输入字幕文字..."></textarea>
+                    <div class="quick-templates">
+                        <button class="template-btn" data-template="模板1">模板1</button>
+                        <button class="template-btn" data-template="模板2">模板2</button>
+                        <button class="template-btn" data-template="模板3">模板3</button>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>🎨 文字样式</h3>
+                    <div class="control-group">
+                        <label>字体大小</label>
+                        <div class="control-row">
+                            <input type="range" id="fontSize" min="12" max="72" value="32">
+                            <span id="fontSizeValue">32px</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>字体</label>
+                        <select id="fontFamily">
+                            <option value="Microsoft YaHei">微软雅黑</option>
+                            <option value="SimHei">黑体</option>
+                            <option value="SimSun">宋体</option>
+                            <option value="KaiTi">楷体</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Courier New">Courier New</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>文字颜色</label>
+                        <div class="control-row">
+                            <input type="color" id="textColor" value="#ffffff">
+                            <span id="textColorValue">#ffffff</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>背景类型</label>
+                        <select id="bgType">
+                            <option value="color">纯色背景</option>
+                            <option value="image">图片背景</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>背景颜色</label>
+                        <div class="control-row">
+                            <input type="color" id="bgColor" value="#000000">
+                            <span id="bgColorValue">#000000</span>
+                        </div>
+                    </div>
+                    <div class="control-group" id="bgImageGroup" style="display: none;">
+                        <label>背景图片</label>
+                        <div class="control-row">
+                            <span style="color: #666; font-size: 12px;">使用已上传的主图片作为背景</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>背景透明度</label>
+                        <div class="control-row">
+                            <input type="range" id="bgOpacity" min="0" max="100" value="75">
+                            <span id="bgOpacityValue">75%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>📐 布局设置</h3>
+                    <div class="control-group">
+                        <label>字幕宽度</label>
+                        <div class="control-row">
+                            <input type="range" id="captionWidth" min="50" max="100" value="90">
+                            <span id="captionWidthValue">90%</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>底部边距</label>
+                        <div class="control-row">
+                            <input type="range" id="bottomPadding" min="0" max="100" value="20">
+                            <span id="bottomPaddingValue">20px</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>行高</label>
+                        <div class="control-row">
+                            <input type="range" id="lineHeight" min="100" max="200" value="140">
+                            <span id="lineHeightValue">140%</span>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label>文字对齐</label>
+                        <div class="alignment-buttons">
+                            <button class="align-btn active" data-align="left" title="左对齐">⬅️</button>
+                            <button class="align-btn" data-align="center" title="居中">⬆️</button>
+                            <button class="align-btn" data-align="right" title="右对齐">➡️</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-section">
+                    <h3>💾 导出设置</h3>
+                    <div class="control-group">
+                        <label>导出格式</label>
+                        <select id="exportFormat">
+                            <option value="png">PNG（无损质量）</option>
+                            <option value="jpeg">JPEG（可压缩）</option>
+                        </select>
+                    </div>
+                    <div class="control-group" id="qualityControl" style="display: none;">
+                        <label>图片质量</label>
+                        <div class="control-row">
+                            <input type="range" id="exportQuality" min="10" max="100" value="90">
+                            <span id="exportQualityValue">90%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="resetBtn">🔄 重置</button>
+                    <button class="btn btn-primary" id="downloadBtn">⬇️ 下载图片</button>
+                </div>
+            </aside>
+        </main>
+
+        <footer>
+            <p>💡 提示：所有处理都在浏览器中完成，您的图片不会上传到服务器</p>
+        </footer>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
